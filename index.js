@@ -84,7 +84,12 @@ async function runTest() {
         const lighthouseRaw = await lighthouse(testUrl, lighthouseOptions);
         const lighthouseClean = mapLighhouseResults(lighthouseRaw);
         allCleanData = allCleanData.concat(lighthouseClean);
-        await chrome.kill();
+
+        try {
+            await chrome.kill();
+        } catch (killError) {
+            console.log("   -> Info: Windows blocked deleting the temp directory, testing continues anyway.")
+        }
         console.log(`   -> Lighthouse found ${lighthouseClean.length} errors.`)
 
         fs.writeFileSync("combined-results.json", JSON.stringify(allCleanData, null, 2));
