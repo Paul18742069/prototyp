@@ -1,21 +1,13 @@
-const fs = require('fs');
-const path = require('path');
-
-// Wir importieren nur noch unsere 3 Tools (keinen Aggregator mehr)
 const runPa11y = require('./tools/pa11yRunner');
 const runAxe = require('./tools/axeRunner');
 const runLighthouse = require('./tools/lighthouseRunner');
+const getOverlappingErrors = require('./core/errorFilter');
+const saveAllResults = require('./core/fileManager');
 
 async function runTest() {
     console.log("Starting automated accessibility test...");
     const testUrl = 'https://www.w3.org/WAI/demos/bad/before/home.html';
     let allCleanData = [];
-
-    // Ordner für die Ergebnisse vorbereiten
-    const resultsDir = path.join(__dirname, 'results');
-    if (!fs.existsSync(resultsDir)) {
-        fs.mkdirSync(resultsDir);
-    }
 
     try {
         console.log("Running Pa11y...");
@@ -35,15 +27,20 @@ async function runTest() {
 
         console.log(`\nTotal errors collected (Unfiltered/Raw): ${allCleanData.length}`);
 
-        // Speichere die ungefilterten Gesamtdaten im results-Ordner
-        const outputPath = path.join(resultsDir, 'combined-raw-results.json');
-        fs.writeFileSync(outputPath, JSON.stringify(allCleanData, null, 2));
+        const allCategorizedErrors = getOverlappingErrors(allCleanData);
+        const multiToolErrors = allCategorizedErrors.filter(e => e.foundByTools.length >= 2);
+        const singleToolErrors = allCategorizedErrors.filter(e => e.foundByTools.length === 1);
 
-        console.log("Testing completed successfully!");
-        console.log(`Results saved to: ${outputPath}`);
+        saveAllResults(allCleanData, multiToolErrors, singleToolErrors);
+
+        console.log(`\n--- SUMMARY ---`);
+        console.log(`Highly confirmed errors (confirmed by >= 2 tools): ${multiToolErrors.length} categories`);
+        console.log(`Exclusive errors (found by only 1 tool): ${singleToolErrors.length} categories`);
+
+        console.log("\nTesting completed successfully! All files saved to 'results' folder.");
 
     } catch (error) {
-        console.error("Es gab einen Fehler bei der Ausführung:", error);
+        console.error("An error occurred during execution:", error);
     }
 }
 
