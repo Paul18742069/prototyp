@@ -1,5 +1,3 @@
-const chromeLauncher = require('chrome-launcher');
-
 function mapLighthouseResults(lighthouseRawData) {
     let cleanResults = [];
     const audits = lighthouseRawData.lhr.audits;
@@ -22,6 +20,8 @@ function mapLighthouseResults(lighthouseRawData) {
 
 async function runLighthouse(url) {
     const { default: lighthouse } = await import('lighthouse');
+    const chromeLauncher = await import('chrome-launcher');
+
     const chrome = await chromeLauncher.launch({chromeFlags: ['--headless']});
     const lighthouseOptions = {
         logLevel: 'silent',
@@ -36,7 +36,7 @@ async function runLighthouse(url) {
     try {
         await chrome.kill();
     } catch (killError) {
-        console.log("   -> Info: Windows blocked deleting the temp directory, testing continues anyway.");
+        console.log("   -> Info: OS blocked deleting the temp directory, testing continues anyway.");
     }
 
     return cleanData;
