@@ -7,7 +7,7 @@ function mapAxeResults(axeRawData) {
         violation.nodes.forEach(node => {
             cleanResults.push({
                 toolName: 'Axe-core',
-                wcagCriterion: violation.tags.find(tag => tag.includes('wcag')) || violation.id,
+                wcagCriterion: violation.id,
                 cssSelector: node.target.join(', '),
                 errorMessage: node.failureSummary || violation.help
             });

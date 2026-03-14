@@ -18,12 +18,16 @@ function determineWcagCriterion(error) {
         'link-name': 'WCAG 2.4.4',
         'label': 'WCAG 3.3.2',
         'landmark-one-main': 'WCAG 1.3.1',
+        'region': 'WCAG 1.3.1',
         'document-title': 'WCAG 2.4.2',
         'button-name': 'WCAG 4.1.2',
         'list': 'WCAG 1.3.1',
         'listitem': 'WCAG 1.3.1',
         'tabindex': 'WCAG 2.4.3',
         'bypass': 'WCAG 2.4.1',
+        'select-name': 'WCAG 4.1.2',
+        'target-size': 'WCAG 2.5.5',
+        'html-xml-lang-mismatch': 'WCAG 3.1.1'
     };
 
     if (ruleMapping[code]) {
@@ -38,17 +42,42 @@ function normalizeSelector(selector) {
     return selector.trim().toLowerCase().replace(/\s+/g, ' ');
 }
 
+function removePseudoClasses(selector) {
+    return selector.replace(/:nth-child\(\d+\)/g, '').replace(/:nth-of-type\(\d+\)/g, '');
+}
+
+function getTargetElementTag(selector) {
+    const parts = selector.split('>');
+    const lastPart = parts[parts.length - 1].trim();
+    return lastPart.split('[')[0].split('.')[0].split('#')[0];
+}
+
 function doSelectorsMatch(sel1, sel2) {
     if (sel1 === sel2) return true;
     if (sel1 === 'unknown-element' || sel2 === 'unknown-element') return false;
 
-    if ((sel1.includes(sel2) && sel2.length > 5) || (sel2.includes(sel1) && sel1.length > 5)) {
+    const idMatch1 = sel1.match(/#[a-z0-9_-]+/i);
+    const idMatch2 = sel2.match(/#[a-z0-9_-]+/i);
+
+    if (idMatch1 && idMatch2 && idMatch1[0] !== idMatch2[0]) {
+        return false;
+    }
+
+    if (idMatch1 && idMatch2 && idMatch1[0] === idMatch2[0]) {
         return true;
     }
 
-    const idMatch1 = sel1.match(/#[a-z0-9_-]+/i);
-    const idMatch2 = sel2.match(/#[a-z0-9_-]+/i);
-    if (idMatch1 && idMatch2 && idMatch1[0] === idMatch2[0]) {
+    const tag1 = getTargetElementTag(sel1);
+    const tag2 = getTargetElementTag(sel2);
+    if (tag1 && tag2 && tag1 !== tag2 && tag1 !== '*' && tag2 !== '*') {
+        return false;
+    }
+
+    const cleanSel1 = removePseudoClasses(sel1);
+    const cleanSel2 = removePseudoClasses(sel2);
+
+    if ((cleanSel1.includes(cleanSel2) && cleanSel2.length > 3) ||
+        (cleanSel2.includes(cleanSel1) && cleanSel1.length > 3)) {
         return true;
     }
 
@@ -76,8 +105,9 @@ function getOverlappingErrors(allErrors) {
         if (!existingMatch) {
             aggregated.push({
                 issueCategory: wcagCategory,
-                cssSelector: error.cssSelector, // Original für den Report behalten
+                cssSelector: error.cssSelector,
                 foundByTools: [error.toolName],
+                toolCounts: { [error.toolName]: 1 },
                 totalOccurrences: 1
             });
         } else {
@@ -86,6 +116,8 @@ function getOverlappingErrors(allErrors) {
             if (!existingMatch.foundByTools.includes(error.toolName)) {
                 existingMatch.foundByTools.push(error.toolName);
             }
+
+            existingMatch.toolCounts[error.toolName] = (existingMatch.toolCounts[error.toolName] || 0) + 1;
         }
     });
 
