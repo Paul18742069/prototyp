@@ -6,7 +6,7 @@ const saveAllResults = require('./core/fileManager');
 
 async function runTest() {
     console.log("Starting automated accessibility test...");
-    const testUrl = 'https://www.w3.org/WAI/demos/bad/after/home.html';
+    const testUrl = 'https://www.w3.org/WAI/demos/bad/before/home.html';
     let allCleanData = [];
 
     try {
