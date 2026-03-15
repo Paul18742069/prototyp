@@ -13,21 +13,64 @@ function determineWcagCriterion(error) {
 
     const ruleMapping = {
         'image-alt': 'WCAG 1.1.1',
-        'color-contrast': 'WCAG 1.4.3',
-        'html-has-lang': 'WCAG 3.1.1',
-        'link-name': 'WCAG 2.4.4',
-        'label': 'WCAG 3.3.2',
-        'landmark-one-main': 'WCAG 1.3.1',
-        'region': 'WCAG 1.3.1',
-        'document-title': 'WCAG 2.4.2',
-        'button-name': 'WCAG 4.1.2',
+        'area-alt': 'WCAG 1.1.1',
+        'input-image-alt': 'WCAG 1.1.1',
+        'object-alt': 'WCAG 1.1.1',
+        'role-img-alt': 'WCAG 1.1.1',
+        'image-redundant-alt': 'WCAG 1.1.1',
+
+        'empty-heading': 'WCAG 1.3.1',
+        'heading-order': 'WCAG 1.3.1',
+        'p-as-heading': 'WCAG 1.3.1',
         'list': 'WCAG 1.3.1',
         'listitem': 'WCAG 1.3.1',
-        'tabindex': 'WCAG 2.4.3',
+        'dlitem': 'WCAG 1.3.1',
+        'definition-list': 'WCAG 1.3.1',
+        'layout-table': 'WCAG 1.3.1',
+        'td-headers-attr': 'WCAG 1.3.1',
+        'th-has-data-cells': 'WCAG 1.3.1',
+        'landmark-one-main': 'WCAG 1.3.1',
+        'region': 'WCAG 1.3.1',
+
+        'link-in-text-block': 'WCAG 1.4.1',
+
+        'color-contrast': 'WCAG 1.4.3',
+
+        'meta-viewport': 'WCAG 1.4.4',
+
+        'blink': 'WCAG 2.2.2',
+        'marquee': 'WCAG 2.2.2',
+
         'bypass': 'WCAG 2.4.1',
+        'frame-title': 'WCAG 2.4.1',
+
+        'document-title': 'WCAG 2.4.2',
+
+        'tabindex': 'WCAG 2.4.3',
+
+        'link-name': 'WCAG 2.4.4',
+
+        'html-has-lang': 'WCAG 3.1.1',
+        'html-xml-lang-mismatch': 'WCAG 3.1.1',
+
+        'valid-lang': 'WCAG 3.1.2',
+
+        'label': 'WCAG 3.3.2',
+
+        'duplicate-id': 'WCAG 4.1.1',
+        'duplicate-id-active': 'WCAG 4.1.1',
+
+        'button-name': 'WCAG 4.1.2',
         'select-name': 'WCAG 4.1.2',
-        'target-size': 'WCAG 2.5.5',
-        'html-xml-lang-mismatch': 'WCAG 3.1.1'
+        'aria-roles': 'WCAG 4.1.2',
+        'aria-valid-attr': 'WCAG 4.1.2',
+        'aria-valid-attr-value': 'WCAG 4.1.2',
+        'aria-allowed-attr': 'WCAG 4.1.2',
+        'aria-required-attr': 'WCAG 4.1.2',
+        'aria-required-children': 'WCAG 4.1.2',
+        'aria-required-parent': 'WCAG 4.1.2',
+
+        'target-size': 'WCAG 2.5.5'
     };
 
     if (ruleMapping[code]) {
